@@ -17,6 +17,7 @@ import ru.nikitapopov.weathermeasuresapi.utils.CustomErrorResponse;
 import ru.nikitapopov.weathermeasuresapi.utils.MeasurementNotSavedException;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/measurements")
@@ -84,12 +85,12 @@ public class MeasurementsController {
     private Measurement convertToMeasurement(MeasurementDTO measurementDTO) {
         Measurement measurement = modelMapper.map(measurementDTO, Measurement.class);
         String ownerSensorName = measurementDTO.getSensor().getName();
-        Sensor owner = sensorService.findByName(ownerSensorName);
+        Optional<Sensor> owner = sensorService.findByName(ownerSensorName);
 
-        if (owner == null)
+        if (owner.isEmpty())
             throw new MeasurementNotSavedException("Сенсора с именем '" + ownerSensorName + "' не существует!");
 
-        measurement.setSensor(owner);
+        measurement.setSensor(owner.get());
 
         return measurement;
     }

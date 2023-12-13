@@ -8,33 +8,33 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import ru.nikitapopov.weathermeasuresapi.dto.MeasurementDTO;
 import ru.nikitapopov.weathermeasuresapi.dto.SensorDTO;
-import ru.nikitapopov.weathermeasuresapi.models.Measurement;
 import ru.nikitapopov.weathermeasuresapi.models.Sensor;
 import ru.nikitapopov.weathermeasuresapi.services.SensorService;
 import ru.nikitapopov.weathermeasuresapi.utils.CustomErrorResponse;
-import ru.nikitapopov.weathermeasuresapi.utils.MeasurementNotSavedException;
 import ru.nikitapopov.weathermeasuresapi.utils.SensorNotRegisterException;
-
-import java.lang.reflect.Field;
+import ru.nikitapopov.weathermeasuresapi.utils.SensorDTOValidator;
 
 @RestController
 @RequestMapping("/api/v1/sensors")
 public class SensorsController {
 
     private final SensorService sensorService;
+    private final SensorDTOValidator sensorDTOValidator;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public SensorsController(SensorService sensorService, ModelMapper modelMapper) {
+    public SensorsController(SensorService sensorService, SensorDTOValidator sensorDTOValidator, ModelMapper modelMapper) {
         this.sensorService = sensorService;
+        this.sensorDTOValidator = sensorDTOValidator;
         this.modelMapper = modelMapper;
     }
 
     @PostMapping("/registration")
     public ResponseEntity<HttpStatus> registerSensor(@RequestBody @Valid SensorDTO sensorDTO,
                                                      BindingResult result) {
+
+        sensorDTOValidator.validate(sensorDTO, result);
 
         if (result.hasErrors()) {
             StringBuilder builder = new StringBuilder();

@@ -7,6 +7,7 @@ import ru.nikitapopov.weathermeasuresapi.models.Sensor;
 import ru.nikitapopov.weathermeasuresapi.repositories.SensorRepository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -19,7 +20,7 @@ public class SensorService {
         this.sensorRepository = sensorRepository;
     }
 
-    public Sensor findByName(String name) {
+    public Optional<Sensor> findByName(String name) {
         return sensorRepository.findByName(name);
     }
 
