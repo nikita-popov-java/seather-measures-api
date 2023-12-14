@@ -21,4 +21,5 @@ The following guides illustrate how to use this api:
 * [`measurements/add`](https://localhost:8080/api/v1/measurements/add)
 
     Add new measurement
+  ###### Available sensor - "test-sensor"
 
