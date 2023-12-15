@@ -83,15 +83,6 @@ public class MeasurementsController {
     }
 
     private Measurement convertToMeasurement(MeasurementDTO measurementDTO) {
-        Measurement measurement = modelMapper.map(measurementDTO, Measurement.class);
-        String ownerSensorName = measurementDTO.getSensor().getName();
-        Optional<Sensor> owner = sensorService.findByName(ownerSensorName);
-
-        if (owner.isEmpty())
-            throw new MeasurementNotSavedException("Сенсора с именем '" + ownerSensorName + "' не существует!");
-
-        measurement.setSensor(owner.get());
-
-        return measurement;
+        return modelMapper.map(measurementDTO, Measurement.class);
     }
 }
