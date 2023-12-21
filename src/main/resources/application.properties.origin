@@ -6,3 +6,6 @@ spring.datasource.password=
 
 # hibernate
 spring.jpa.properties.hibernate.dialect=
+
+#authentication
+jwt-secret=
