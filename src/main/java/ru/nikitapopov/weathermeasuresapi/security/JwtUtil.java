@@ -27,6 +27,8 @@ public class JwtUtil {
     public String createToken(String username) {
         Date expiredDate = Date.from(ZonedDateTime.now().toInstant().plusSeconds(JWT_LIVING_TIME));
 
+        System.err.println(Algorithm.HMAC256(JWT_SECRET));
+
         return JWT.create()
                 .withSubject(JWT_SUBJECT)
                 .withClaim(JWT_CLAIM_USERNAME, username)

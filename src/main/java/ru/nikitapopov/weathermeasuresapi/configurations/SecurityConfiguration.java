@@ -5,10 +5,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.SecurityConfigurer;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,10 +27,38 @@ import ru.nikitapopov.weathermeasuresapi.utils.Authority;
 public class SecurityConfiguration {
 
     private final JwtFilter jwtFilter;
+    private final ApiUserDetailsService apiUserDetailsService;
 
     @Autowired
-    public SecurityConfiguration(JwtFilter jwtFilter) {
+    public SecurityConfiguration(JwtFilter jwtFilter, ApiUserDetailsService apiUserDetailsService) {
         this.jwtFilter = jwtFilter;
+        this.apiUserDetailsService = apiUserDetailsService;
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception {
+        security.csrf(CsrfConfigurer::disable).cors(CorsConfigurer::disable)
+                .authorizeHttpRequests(auth ->
+                        auth.requestMatchers("api/v1/auth/registration").permitAll()
+                                .requestMatchers( "*/sensors").hasAuthority(Authority.ROLE_ADMIN.toString())
+                                .requestMatchers("*/measurements/add").hasAnyAuthority(
+                                        Authority.ROLE_EMPLOYEE.toString(),
+                                        Authority.ROLE_ADMIN.toString()
+                                ).requestMatchers("*/measurements", "*/measurements/**").hasAnyAuthority(
+                                        Authority.ROLE_USER.toString(),
+                                        Authority.ROLE_EMPLOYEE.toString(),
+                                        Authority.ROLE_ADMIN.toString()
+                                )
+                ).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return security.build();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 
     @Bean
@@ -36,22 +67,11 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception {
-        security.csrf(CsrfConfigurer::disable)
-                .authorizeHttpRequests(auth ->
-                        auth.requestMatchers(HttpMethod.POST, "/sensors").hasAuthority(Authority.ROLE_ADMIN.toString())
-                                .requestMatchers(HttpMethod.POST, "/measurements/add").hasAnyAuthority(
-                                        Authority.ROLE_EMPLOYEE.toString(),
-                                        Authority.ROLE_ADMIN.toString()
-                                ).requestMatchers(HttpMethod.GET, "/measurements", "/measurements/**").hasAnyAuthority(
-                                        Authority.ROLE_USER.toString(),
-                                        Authority.ROLE_EMPLOYEE.toString(),
-                                        Authority.ROLE_ADMIN.toString()
-                                ).requestMatchers("/auth/**").permitAll()
-                ).sessionManagement(config ->
-                    config.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                ).addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return security.build();
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(apiUserDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
     }
+
 }
