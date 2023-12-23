@@ -26,8 +26,8 @@ public class AuthenticationDTOValidator implements Validator {
     public void validate(Object target, Errors errors) {
         AuthenticationDTO authenticationDTO = (AuthenticationDTO) target;
 
-        if (apiUserDetailsRepository.findByUsername(authenticationDTO.getUsername()).isEmpty()) {
-            errors.rejectValue("username", "", "Пользователя с таким именем не существует!");
+        if (apiUserDetailsRepository.findByUsername(authenticationDTO.getUsername()).isPresent()) {
+            errors.rejectValue("username", "", "Пользователь с таким именем уже существует!");
         }
     }
 }

@@ -1,11 +1,13 @@
 package ru.nikitapopov.weathermeasuresapi.security;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
@@ -36,21 +38,30 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String tokenHeader = request.getHeader(AUTHORIZATION_HEADER_KEY);
 
-        if (tokenHeader == null
-            || tokenHeader.isBlank()
-                || tokenHeader.startsWith(AUTHORIZATION_HEADER_VALUE_PREFIX)
-                || tokenHeader.substring(7).isBlank()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid authorization token!");
-        } else {
-            String username = jwtUtil.retrieveUsernameClaimFromToken(tokenHeader.substring(7));
-            Optional<ApiUser> user = apiUserDetailsService.findUserOptionalByUsername(username);
-            ApiUserDetails apiUserDetails = new ApiUserDetails(user.orElseThrow(() -> new UsernameNotFoundException("Пользователь с таким именем не найден!")));
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                    apiUserDetails, apiUserDetails.getPassword(), apiUserDetails.getAuthorities()
-            );
+        if (tokenHeader != null && !tokenHeader.isBlank() && tokenHeader.startsWith(AUTHORIZATION_HEADER_VALUE_PREFIX)) {
 
-            if (SecurityContextHolder.getContext().getAuthentication() == null) {
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            String jwtToken = tokenHeader.substring(7);
+
+            if (jwtToken.isBlank()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid authorization token!");
+            } else {
+                try {
+                    String username = jwtUtil.retrieveUsernameClaimFromToken(jwtToken);
+                    ApiUserDetails apiUserDetails = (ApiUserDetails) apiUserDetailsService.loadUserByUsername(username);
+                    SecurityContext securityContext = SecurityContextHolder.getContext();
+
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                            apiUserDetails, apiUserDetails.getPassword(), apiUserDetails.getAuthorities()
+                    );
+
+                    if (securityContext.getAuthentication() != null) {
+                        securityContext.setAuthentication(null);
+                    }
+
+                    securityContext.setAuthentication(authenticationToken);
+                } catch (JWTVerificationException ex) {
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid authorization token!");
+                }
             }
         }
 

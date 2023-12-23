@@ -13,21 +13,20 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
+
     @Value("${jwt-subject}")
-    private final String JWT_SUBJECT = "";
+    private String JWT_SUBJECT;
     @Value("${jwt-claim.username}")
-    private final String JWT_CLAIM_USERNAME = "";
+    private String JWT_CLAIM_USERNAME;
     @Value("${jwt-issuer}")
-    private final String JWT_ISSUER = "";
+    private String JWT_ISSUER;
     @Value("${jwt-secret}")
-    private final String JWT_SECRET = "";
+    private String JWT_SECRET;
     @Value("${jwt-living-time}")
-    private final int JWT_LIVING_TIME = 0;
+    private int JWT_LIVING_TIME;
 
     public String createToken(String username) {
         Date expiredDate = Date.from(ZonedDateTime.now().toInstant().plusSeconds(JWT_LIVING_TIME));
-
-        System.err.println(Algorithm.HMAC256(JWT_SECRET));
 
         return JWT.create()
                 .withSubject(JWT_SUBJECT)
