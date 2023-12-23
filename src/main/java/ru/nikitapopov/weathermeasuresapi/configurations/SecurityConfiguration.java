@@ -37,18 +37,18 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception {
-        security.csrf(CsrfConfigurer::disable).cors(CorsConfigurer::disable)
-                .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("api/v1/auth/registration").permitAll()
-                                .requestMatchers( "*/sensors").hasAuthority(Authority.ROLE_ADMIN.toString())
-                                .requestMatchers("*/measurements/add").hasAnyAuthority(
-                                        Authority.ROLE_EMPLOYEE.toString(),
-                                        Authority.ROLE_ADMIN.toString()
-                                ).requestMatchers("*/measurements", "*/measurements/**").hasAnyAuthority(
-                                        Authority.ROLE_USER.toString(),
-                                        Authority.ROLE_EMPLOYEE.toString(),
-                                        Authority.ROLE_ADMIN.toString()
-                                )
+        security.csrf(CsrfConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/v1/sensors/**").hasAuthority(
+                                Authority.ROLE_ADMIN.toString()
+                        ).requestMatchers(HttpMethod.POST, "/api/v1/measurements/**").hasAnyAuthority(
+                                Authority.ROLE_EMPLOYEE.toString(),
+                                Authority.ROLE_ADMIN.toString()
+                        ).requestMatchers(HttpMethod.GET, "/api/v1/measurements/**").hasAnyAuthority(
+                                Authority.ROLE_USER.toString(),
+                                Authority.ROLE_EMPLOYEE.toString(),
+                                Authority.ROLE_ADMIN.toString()
+                        ).anyRequest().permitAll()
                 ).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
