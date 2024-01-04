@@ -7,5 +7,9 @@ spring.datasource.password=
 # hibernate
 spring.jpa.properties.hibernate.dialect=
 
-#authentication
+# JWT
+jwt-subject=
+jwt-claim.username=
+jwt-issuer=
 jwt-secret=
+jwt-living-time=
