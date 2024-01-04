@@ -1,0 +1,15 @@
+# data source
+spring.datasource.driver-class-name=
+spring.datasource.url=
+spring.datasource.username=
+spring.datasource.password=
+
+# hibernate
+spring.jpa.properties.hibernate.dialect=
+
+# JWT
+jwt-subject=
+jwt-claim.username=
+jwt-issuer=
+jwt-secret=
+jwt-living-time=

@@ -1,0 +1,15 @@
+/home/nikita/IdeaProjects/WeatherMeasuresAPI/src/main/java/ru/nikitapopov/weathermeasuresapi/controllers/SensorsController.java
+/home/nikita/IdeaProjects/WeatherMeasuresAPI/src/main/java/ru/nikitapopov/weathermeasuresapi/repositories/SensorRepository.java
+/home/nikita/IdeaProjects/WeatherMeasuresAPI/src/main/java/ru/nikitapopov/weathermeasuresapi/dto/SensorDTO.java
+/home/nikita/IdeaProjects/WeatherMeasuresAPI/src/main/java/ru/nikitapopov/weathermeasuresapi/models/Measurement.java
+/home/nikita/IdeaProjects/WeatherMeasuresAPI/src/main/java/ru/nikitapopov/weathermeasuresapi/utils/SensorNotRegisterException.java
+/home/nikita/IdeaProjects/WeatherMeasuresAPI/src/main/java/ru/nikitapopov/weathermeasuresapi/services/SensorService.java
+/home/nikita/IdeaProjects/WeatherMeasuresAPI/src/main/java/ru/nikitapopov/weathermeasuresapi/utils/SensorDTOValidator.java
+/home/nikita/IdeaProjects/WeatherMeasuresAPI/src/main/java/ru/nikitapopov/weathermeasuresapi/repositories/MeasurementRepository.java
+/home/nikita/IdeaProjects/WeatherMeasuresAPI/src/main/java/ru/nikitapopov/weathermeasuresapi/utils/CustomErrorResponse.java
+/home/nikita/IdeaProjects/WeatherMeasuresAPI/src/main/java/ru/nikitapopov/weathermeasuresapi/WeatherMeasuresApiApplication.java
+/home/nikita/IdeaProjects/WeatherMeasuresAPI/src/main/java/ru/nikitapopov/weathermeasuresapi/models/Sensor.java
+/home/nikita/IdeaProjects/WeatherMeasuresAPI/src/main/java/ru/nikitapopov/weathermeasuresapi/utils/MeasurementNotSavedException.java
+/home/nikita/IdeaProjects/WeatherMeasuresAPI/src/main/java/ru/nikitapopov/weathermeasuresapi/services/MeasurementService.java
+/home/nikita/IdeaProjects/WeatherMeasuresAPI/src/main/java/ru/nikitapopov/weathermeasuresapi/dto/MeasurementDTO.java
+/home/nikita/IdeaProjects/WeatherMeasuresAPI/src/main/java/ru/nikitapopov/weathermeasuresapi/controllers/MeasurementsController.java
