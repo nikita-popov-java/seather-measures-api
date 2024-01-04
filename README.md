@@ -17,9 +17,16 @@ The following guides illustrate how to use this api:
     
     Get all measurements
 
+* [`measurements/rainyDaysCount`](https://localhost:8080/api/v1/measurements/rainyDaysCount)
+
+  Get count of rainy days
 
 * [`measurements/add`](https://localhost:8080/api/v1/measurements/add)
 
-    Add new measurement
+  Add new measurement
+
+* [`sensors/registration`](https://localhost:8080/api/v1/sensors/registration)
+
+  Registration new sensor by name
   ###### Available sensor - "test-sensor"
 

@@ -24,13 +24,11 @@ import java.util.Optional;
 public class MeasurementsController {
 
     private final MeasurementService measurementService;
-    private final SensorService sensorService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public MeasurementsController(MeasurementService measurementService, SensorService sensorService, ModelMapper modelMapper) {
+    public MeasurementsController(MeasurementService measurementService, ModelMapper modelMapper) {
         this.measurementService = measurementService;
-        this.sensorService = sensorService;
         this.modelMapper = modelMapper;
     }
 
